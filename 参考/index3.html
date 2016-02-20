@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>在一个可编辑的div光标处插入图片或者文本</title>
+</head>
+
+<body>
+<div style="width:500px; margin:20px auto; height:200px; border:1px solid red" contenteditable="true" id="reditor"></div>
+<button  id="contenteditable">插入图片</button>
+</body>
+</html>
+<script>
+
+    window.onload=function(){
+        document.getElementById("contenteditable").onclick=function(){
+            Manager.insertImg();
+        };
+    }
+    var Manager = {
+        insertHtml:function(html,type){
+
+            var lastMemo=document.getElementById("memo"),lastEditor=document.getElementById("reditor");
+
+
+            type=type||'memo';
+
+            var control=type=='memo'?lastMemo:lastEditor;
+
+            if(!control)return;
+
+            control.focus();
+
+            var selection=window.getSelection?window.getSelection():document.selection,
+
+                    range=selection.createRange?selection.createRange():selection.getRangeAt(0);
+
+
+            //判断浏览器是ie，但不是ie9以上
+            var browser = checkBrowser().split(":");
+            var IEbrowser = checkBrowser().split(":")[0];
+            var IEverson =  Number(checkBrowser().split(":")[1]);
+
+            if(IEbrowser=="IE"&&IEverson<9){
+
+                range.pasteHTML(html);
+
+            }else{
+
+                var node=document.createElement('span');
+
+                node.innerHTML=html;
+
+                range.insertNode(node);
+
+                selection.addRange(range);
+
+            }
+
+        },
+
+        insertImg:function(){
+            var img="<img src='http://www.baidu.com/img/bdlogo.gif'/>";
+            this.insertHtml(img,'editor');
+        }
+
+    }
+
+    function checkBrowser()
+    {
+        var browserName=navigator.userAgent.toLowerCase();
+        //var ua = navigator.userAgent.toLowerCase();
+        var Sys = {};
+        var rtn = false;
+
+        if(/msie/i.test(browserName) && !/opera/.test(browserName)){
+            strBrowser = "IE: "+browserName.match(/msie ([\d.]+)/)[1];
+            rtn = true;
+            //return true;
+        }else if(/firefox/i.test(browserName)){
+            strBrowser = "Firefox: " + browserName.match(/firefox\/([\d.]+)/)[1];;
+            //return false;
+        }else if(/chrome/i.test(browserName) && /webkit/i.test(browserName) && /mozilla/i.test(browserName)){
+            strBrowser = "Chrome: " + browserName.match(/chrome\/([\d.]+)/)[1];
+            //return false;
+        }else if(/opera/i.test(browserName)){
+            strBrowser = "Opera: " + browserName.match(/opera.([\d.]+)/)[1];
+            //return false;
+        }else if(/webkit/i.test(browserName) &&!(/chrome/i.test(browserName) && /webkit/i.test(browserName) && /mozilla/i.test(browserName))){
+            strBrowser = "Safari: ";
+            //return false;
+        }else{
+            strBrowser = "unKnow,未知浏览器 ";
+            //return false;
+        }
+        strBrowser = strBrowser ;
+        //alert(strBrowser)
+        return strBrowser;
+    }
+
+
+
+
+
+</script>
